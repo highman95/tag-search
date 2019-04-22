@@ -80,6 +80,64 @@
                     </form>
                     <hr/>
                 </div>
+
+                <?php if (!empty($url)): ?>
+                    <?php
+                    $file_contents = @file_get_contents($url);
+
+                    $tag = !empty($_GET['tag']) ? $_GET['tag'] : null;
+                    $file_contents_f = is_null($tag) ? $file_contents : str_replace([''], [''], $file_contents);
+
+                    $dm = new DOMDocument();
+                    @$dm->loadHTML($file_contents);
+
+                    $html_tags = getHtmlTagsWithCount($dm);
+                    ksort($html_tags, SORT_STRING);
+                    ?>
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-header pl-3" style="background-color: gray;"><h6 class="card-title mb-0 font-weight-bold">View Source</h6></div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="pre-scrollable bg-white">
+                                            <pre><code><?= htmlentities($file_contents_f); ?></code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table text-left m-0 bg-white">
+                                <thead>
+                                <tr bgcolor="gray" class="font-weight-bold">
+                                    <td colspan="2">Summary of findings</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr valign="top">
+                                    <td width="150" class="p-0">
+                                        <ul class="list-group">
+                                            <?php foreach ($html_tags as $tag_name => $tag_count) { ?>
+                                                <li class="list-group-item p-2">
+                                                    <a href="#<?= $tag_name; ?>" class="text-dark">
+                                                        <?= $tag_name; ?>
+                                                        <span class="badge badge-info float-right"><?= $tag_count; ?></span>
+                                                    </a>
+                                                </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </td>
+                                    <td><?php displayNodes($dm); ?></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </main>
 
@@ -98,3 +156,55 @@
 </div>
 </body>
 </html>
+<?php
+function getHtmlTagsWithCount($dm)
+{
+    static $html_tags = [];
+    foreach ($dm->childNodes as $node) {
+        if (!property_exists($node, 'tagName')) {
+            continue;
+        }
+
+        if (!isset($html_tags[$node->tagName])) {
+            $html_tags[$node->tagName] = 0;
+        }
+
+        $html_tags[$node->tagName] += 1;
+
+        if ($node->hasChildNodes()) {
+            getHtmlTagsWithCount($node);
+        }
+    }
+
+    return $html_tags;
+}
+
+function displayNodes($dm)
+{
+    echo '<ul>';
+    foreach ($dm->childNodes as $node) {
+        if (!property_exists($node, 'tagName')) continue;
+
+        echo '<li>';
+        echo '<a id="#' . $node->tagName . '">' . $node->tagName . '</a>';
+        #echo '<pre>' . print_r($node, true) . '</pre>';
+
+        #displayAttributes($node);
+
+        if ($node->hasChildNodes()) {
+            displayNodes($node);
+        }
+        echo '</li>';
+    }
+    echo '</ul>';
+}
+
+function displayAttributes($node)
+{
+    echo '<ul>';
+    foreach ($node->attributes as $attribute) {
+        echo '<li><b>' . $attribute->name . '</b> = ' . $attribute->value . '</li>';
+        #echo '<pre>' . print_r($attribute, true) . '</pre>';
+    }
+    echo '</ul>';
+}
