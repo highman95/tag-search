@@ -84,9 +84,15 @@
                 <?php if (!empty($url)): ?>
                     <?php
                     $file_contents = @file_get_contents($url);
+                    $file_contents_f = htmlentities($file_contents);
 
-                    $tag = !empty($_GET['tag']) ? $_GET['tag'] : null;
-                    $file_contents_f = is_null($tag) ? $file_contents : str_replace([''], [''], $file_contents);
+                    # get the pre-selected tag name
+                    $tag_name_pre = !empty($_GET['tag']) ? $_GET['tag'] : null;
+                    if (!is_null($tag_name_pre)) {
+                        $search = ['&lt;' . $tag_name_pre, '&lt;/' . $tag_name_pre . '&gt;'];
+                        $replace = ['<span class="bg-warning">&lt;' . $tag_name_pre . '</span>', '<span class="bg-warning">&lt;/' . $tag_name_pre . '&gt;</span>'];
+                        $file_contents_f = str_replace($search, $replace, $file_contents_f);
+                    }
 
                     $dm = new DOMDocument();
                     @$dm->loadHTML($file_contents);
@@ -101,7 +107,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="pre-scrollable bg-white">
-                                            <pre><code><?= htmlentities($file_contents_f); ?></code></pre>
+                                            <pre><code><?= $file_contents_f; ?></code></pre>
                                         </div>
                                     </div>
                                 </div>
@@ -112,20 +118,24 @@
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table text-left m-0 bg-white">
-                                <thead>
-                                <tr bgcolor="gray" class="font-weight-bold">
-                                    <td colspan="2">Summary of findings</td>
+                                <thead class="font-weight-bold">
+                                <tr bgcolor="gray">
+                                    <td colspan="2">Summary of document</td>
+                                </tr>
+                                <tr class="bg-dark text-white">
+                                    <th>Tags/Count</th>
+                                    <th>Document Structure &mdash; Mini</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr valign="top">
-                                    <td width="150" class="p-0">
+                                    <td width="40%" class="p-0">
                                         <ul class="list-group">
                                             <?php foreach ($html_tags as $tag_name => $tag_count) { ?>
-                                                <li class="list-group-item p-2">
-                                                    <a href="#<?= $tag_name; ?>" class="text-dark">
-                                                        <?= $tag_name; ?>
-                                                        <span class="badge badge-info float-right"><?= $tag_count; ?></span>
+                                                <li class="list-group-item list-group-item-action<?= ($tag_name_pre == $tag_name ? ' active' : ''); ?>">
+                                                    <a href="?q=<?= $url; ?>&tag=<?= $tag_name; ?>" class="text-dark justify-content-between align-items-center d-flex">
+                                                        &lt;<?= $tag_name; ?>&gt;
+                                                        <span class="badge badge-secondary badge-pill"><?= $tag_count; ?></span>
                                                     </a>
                                                 </li>
                                             <?php } ?>
