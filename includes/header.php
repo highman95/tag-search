@@ -12,7 +12,7 @@
     <title>Tags Search | X-Media</title>
 
     <!-- Scripts -->
-    <!--<script src="assets/js/app.js" defer></script>-->
+    <script src="assets/js/app.js" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">

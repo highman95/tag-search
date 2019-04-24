@@ -43,51 +43,58 @@
             $html_tags = getHtmlTagsWithCount($dm);
             ksort($html_tags, SORT_STRING);
             ?>
-            <div class="col-md-12 mb-4">
-                <div class="card">
-                    <div class="card-header pl-3" style="background-color: gray;"><h6 class="card-title mb-0 font-weight-bold">View Source</h6></div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="pre-scrollable bg-white">
-                                    <pre><code><?= $file_contents_f; ?></code></pre>
+            <div class="col-md-12">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="pill-vs-tab" data-toggle="pill" href="#view-source" aria-controls="pill-vs" role="tab">View Source</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pill-ds-tab" data-toggle="pill" href="#document-summary" aria-controls="pill-ds" role="tab">Document Summary</a>
+                    </li>
+                </ul>
+                <div class="tab-content mb-4" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="view-source" role="tabpanel" aria-labelledby="pill-vs-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="pre-scrollable bg-white">
+                                            <pre><code><?= $file_contents_f; ?></code></pre>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-12">
-                <div class="table-responsive">
-                    <table class="table text-left m-0 bg-white">
-                        <thead class="font-weight-bold">
-                        <tr bgcolor="gray">
-                            <td colspan="2">Summary of document</td>
-                        </tr>
-                        <tr class="bg-dark text-white">
-                            <th>Tags/Count</th>
-                            <th>Document Structure &mdash; Mini</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr valign="top">
-                            <td width="40%" class="p-0">
-                                <ul class="list-group">
-                                    <?php foreach ($html_tags as $tag_name => $tag_count) { ?>
-                                        <li class="list-group-item list-group-item-action<?= ($tag_name_pre == $tag_name ? ' active' : ''); ?>">
-                                            <a href="?q=<?= $url; ?>&tag=<?= $tag_name; ?>" class="text-dark justify-content-between align-items-center d-flex">
-                                                &lt;<?= $tag_name; ?>&gt;
-                                                <span class="badge badge-secondary badge-pill"><?= $tag_count; ?></span>
-                                            </a>
-                                        </li>
-                                    <?php } ?>
-                                </ul>
-                            </td>
-                            <td><?php displayNodes($dm); ?></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="tab-pane fade show" id="document-summary" role="tabpanel" aria-labelledby="pill-ds-tab">
+                        <div class="table-responsive">
+                            <table class="table text-left m-0 bg-white">
+                                <thead class="font-weight-bold">
+                                <tr class="bg-dark text-white">
+                                    <th>Tags/Count</th>
+                                    <th>Document Structure &mdash; Mini</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr valign="top">
+                                    <td width="40%" class="p-0">
+                                        <ul class="list-group">
+                                            <?php foreach ($html_tags as $tag_name => $tag_count) { ?>
+                                                <li class="list-group-item list-group-item-action<?= ($tag_name_pre == $tag_name ? ' active' : ''); ?>">
+                                                    <a href="?q=<?= $url; ?>&tag=<?= $tag_name; ?>" class="text-dark justify-content-between align-items-center d-flex">
+                                                        &lt;<?= $tag_name; ?>&gt;
+                                                        <span class="badge badge-secondary badge-pill"><?= $tag_count; ?></span>
+                                                    </a>
+                                                </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </td>
+                                    <td><?php displayNodes($dm); ?></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>
