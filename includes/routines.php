@@ -1,4 +1,14 @@
 <?php
+function fileGetContentsByCurl($url)
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => 1, CURLOPT_CONNECTTIMEOUT => 5]);
+    $content = curl_exec($ch);
+    curl_close($ch);
+
+    return $content;
+}
+
 function getHtmlTagsWithCount($dm)
 {
     static $html_tags = [];
