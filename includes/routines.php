@@ -2,7 +2,10 @@
 function fileGetContentsByCurl($url)
 {
     $ch = curl_init($url);
-    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => 1, CURLOPT_CONNECTTIMEOUT => 5]);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => 1, CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_SSL_VERIFYHOST => false, CURLOPT_SSL_VERIFYPEER => false
+    ]);
     $content = curl_exec($ch);
     curl_close($ch);
 
