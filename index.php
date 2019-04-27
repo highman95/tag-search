@@ -27,8 +27,8 @@
         <?php if (!empty($url)): ?>
             <?php
             #$context = stream_context_create(['http' => ['method' => 'GET', 'max_redirects' => '0', 'ignore_errors' => '1']]);
-            $file_contents = @file_get_contents($url);
-            #$file_contents = fileGetContentsByCurl($url);
+            #$file_contents = @file_get_contents($url);
+            $file_contents = fileGetContentsByCurl($url);
             $file_contents_f = htmlentities($file_contents);
 
             # get the pre-selected tag name
